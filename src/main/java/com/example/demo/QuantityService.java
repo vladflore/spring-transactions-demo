@@ -35,15 +35,15 @@ public class QuantityService {
         List<TotalQuantity> totalQuantities = totalQuantityRepository.findAll();
         if (CollectionUtils.isEmpty(totalQuantities)) {
             // no record so far, so create one
-            totalQuantityRepository.save(new TotalQuantity().setTotal(quantity));
+            totalQuantityRepository.saveAndFlush(new TotalQuantity().setTotal(quantity));
         } else {
             // TODO check that findAll() returns back a list with just one item
             TotalQuantity totalQuantity = totalQuantities.get(0);
-            totalQuantityRepository.save(totalQuantity.setTotal(totalQuantity.getTotal() + quantity));
+            totalQuantityRepository.saveAndFlush(totalQuantity.setTotal(totalQuantity.getTotal() + quantity));
         }
 
         // add new record for quantity
-        quantityRepository.save(new Quantity().setQuantity(quantity));
+        quantityRepository.saveAndFlush(new Quantity().setQuantity(quantity));
         // notNeededQuantityService.addQuantity(quantity);
 
         // throws a runtime exception if the quantity is negative
