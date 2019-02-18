@@ -1,9 +1,9 @@
-package com.example.demo;
+package com.example.demo.model.entities;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "QUANTITIES")
+@Table(name = "QUANTITY")
 public class Quantity {
 
     @Id
@@ -11,8 +11,8 @@ public class Quantity {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "QUANTITY")
-    private Long quantity;
+    @Column(name = "QUANTITY_VALUE")
+    private Long quantityValue;
 
     public Quantity() {
     }
@@ -25,12 +25,12 @@ public class Quantity {
         this.id = id;
     }
 
-    public Long getQuantity() {
-        return quantity;
+    public Long getQuantityValue() {
+        return quantityValue;
     }
 
-    public Quantity setQuantity(Long quantity) {
-        this.quantity = quantity;
+    public Quantity setQuantityValue(Long quantityValue) {
+        this.quantityValue = quantityValue;
         return this;
     }
 }

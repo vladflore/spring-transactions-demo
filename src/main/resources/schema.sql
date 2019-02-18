@@ -1,11 +1,13 @@
-CREATE TABLE quantities (
-                       id         NUMBER NOT NULL,
-                       quantity   NUMBER,
-                       CONSTRAINT quantities_pk PRIMARY KEY ( id ) ENABLE
+CREATE TABLE quantity
+(
+  id             NUMBER NOT NULL,
+  quantity_value NUMBER,
+  CONSTRAINT quantities_pk PRIMARY KEY (id) ENABLE
 );
 
-CREATE TABLE total_quantity (
-                          id         NUMBER NOT NULL,
-                          total   NUMBER,
-                          CONSTRAINT total_quantity_pk PRIMARY KEY ( id ) ENABLE
+CREATE TABLE stock
+(
+  id          NUMBER NOT NULL,
+  stock_value NUMBER,
+  CONSTRAINT stock_pk PRIMARY KEY (id) ENABLE
 );

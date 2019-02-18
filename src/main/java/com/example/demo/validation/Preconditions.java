@@ -1,4 +1,7 @@
-package com.example.demo;
+package com.example.demo.validation;
+
+import com.example.demo.exception.QuantityException;
+import com.example.demo.exception.QuantityRuntimeException;
 
 public class Preconditions {
 
