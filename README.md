@@ -2,7 +2,7 @@
 
 Small Spring based REST App to play around with the ```@Transactional``` annotation.
 
-Business logic:
+**Business logic:**
 
 Calling the endpoints allows adding quantities and summing them up. Negative quantities are not allowed.
 
@@ -10,7 +10,7 @@ There are two tabels: ```QUANTITY``` for quantities and ```STOCK``` for the sum 
 
 The Service layer throws checked exception ```QuantityException``` and unchecked exception ```QuantityRuntimeException```, according to the type of the endpoint used:
 
-___checked___
+_**checked**_
 
 ```http://localhost:8080/quantities/checked/3```
 
@@ -24,7 +24,7 @@ In the logs, one could see:
 
 ```Winning rollback rule is: RollbackRuleAttribute with pattern [com.example.demo.exception.QuantityException]```
 
-___unchecked___
+_**unchecked**_
 
 ```http://localhost:8080/quantities/unchecked/3```
 
