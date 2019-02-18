@@ -6,7 +6,7 @@ Business logic:
 
 Calling the endpoints allows adding quantities and summing them up. Negative quantities are not allowed.
 
-There are two tabels: ```QUANTITY``` for quantities and ```STOCK``` for the sum of the quantities.
+There are two tabels: ```QUANTITY``` for quantities and ```STOCK``` for the sum of the quantities. The app uses an Oracle XE database.
 
 The Service layer throws checked exception ```QuantityException``` and unchecked exception ```QuantityRuntimeException```, according to the type of the endpoint used:
 
