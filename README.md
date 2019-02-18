@@ -42,4 +42,6 @@ In the logs, one could see:
 
 Production code seems to be working just fine, integration test for trying to add a negative value, fails, a.k.a the negative quantity is persisted, even though an exception is thrown and a roll-back is done, which can be seen in the logs too.
 
+The failing IT is: ```addNegativeQuantity_withException_shouldNOTAddQuantity_andShouldNOTIncreaseStock```
+
 
