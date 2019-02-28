@@ -1,5 +1,7 @@
 # spring-transactions-demo
 
+**_!!!working example!!!_**
+
 Small Spring based REST App to play around with the ```@Transactional``` annotation.
 
 **Business logic:**
@@ -39,9 +41,3 @@ In the logs, one could see:
 ```Winning rollback rule is: null```
 
 ```No relevant rollback rule found: applying default rules```
-
-Production code seems to be working just fine, integration test for trying to add a negative value, fails, a.k.a the negative quantity is persisted, even though an exception is thrown and a roll-back is done, which can be seen in the logs too.
-
-The failing IT is: ```addNegativeQuantity_withException_shouldNOTAddQuantity_andShouldNOTIncreaseStock```
-
-
