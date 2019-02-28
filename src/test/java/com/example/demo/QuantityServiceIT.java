@@ -7,8 +7,9 @@ import com.example.demo.model.entities.Stock;
 import com.example.demo.repository.QuantityRepository;
 import com.example.demo.repository.StockyRepository;
 import com.example.demo.service.QuantityService;
+import org.assertj.core.api.Assertions;
 import org.hamcrest.collection.IsEmptyCollection;
-import org.junit.Ignore;
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -17,9 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -39,11 +40,18 @@ public class QuantityServiceIT {
     @Autowired
     private StockyRepository stockyRepository;
 
-    @Autowired
-    private EntityManager entityManager;
+//    @PersistenceContext
+//    private EntityManager entityManager;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
+    @After
+    public void cleanUp() {
+        System.out.println("Cleaning up...");
+        stockyRepository.findAll().forEach(stock -> stockyRepository.delete(stock));
+        quantityRepository.findAll().forEach(quantity -> quantityRepository.delete(quantity));
+    }
 
     @Test
     @Transactional
@@ -65,7 +73,6 @@ public class QuantityServiceIT {
             quantityService.addQuantityWithException(firstValue);
         } catch (QuantityException e) {
         }
-        // entityManager.flush();
 
         stockValue = stockyRepository.findAll();
         assertNotNull(stockValue);
@@ -79,7 +86,6 @@ public class QuantityServiceIT {
             quantityService.addQuantityWithException(secondValue);
         } catch (QuantityException e) {
         }
-        // entityManager.flush();
 
         stockValue = stockyRepository.findAll();
         assertNotNull(stockValue);
@@ -111,8 +117,7 @@ public class QuantityServiceIT {
     }
 
     @Test
-    @Ignore
-    @Transactional
+//    @Transactional
     public void addNegativeQuantity_withRuntimeException_shouldNOTAddQuantity_andShouldNOTIncreaseStock() {
 
         Long firstValue = 3L;
@@ -128,9 +133,10 @@ public class QuantityServiceIT {
         assertNotNull(quantities);
         assertThat(quantities, IsEmptyCollection.empty());
 
-
-        quantityService.addQuantityWithRuntimeException(firstValue);
-        // entityManager.flush();
+        try {
+            quantityService.addQuantityWithRuntimeException(firstValue);
+        } catch (QuantityRuntimeException e) {
+        }
 
         stockValue = stockyRepository.findAll();
         assertNotNull(stockValue);
@@ -141,8 +147,10 @@ public class QuantityServiceIT {
         assertThat(quantities, hasSize(1));
 
 
-        quantityService.addQuantityWithRuntimeException(secondValue);
-        // entityManager.flush();
+        try {
+            quantityService.addQuantityWithRuntimeException(secondValue);
+        } catch (QuantityRuntimeException e) {
+        }
 
         stockValue = stockyRepository.findAll();
         assertNotNull(stockValue);
@@ -160,9 +168,10 @@ public class QuantityServiceIT {
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
-        // !!! should roll-back
-        quantityService.addQuantityWithRuntimeException(negativeValue);
-        // entityManager.flush();
+        try {
+            quantityService.addQuantityWithRuntimeException(negativeValue);
+        } catch (QuantityRuntimeException e) {
+        }
 
         stockValue = stockyRepository.findAll();
         assertNotNull(stockValue);
@@ -180,8 +189,9 @@ public class QuantityServiceIT {
     }
 
     @Test
-    @Transactional
+    //@Transactional
     public void addNegativeQuantity_withException_shouldNOTAddQuantity_andShouldNOTIncreaseStock() {
+
         Long firstValue = 3L;
         Long secondValue = 7L;
         Long negativeValue = -5L;
@@ -200,7 +210,6 @@ public class QuantityServiceIT {
             quantityService.addQuantityWithException(firstValue);
         } catch (QuantityException e) {
         }
-        // entityManager.flush();
 
         stockValue = stockyRepository.findAll();
         assertNotNull(stockValue);
@@ -215,7 +224,6 @@ public class QuantityServiceIT {
             quantityService.addQuantityWithException(secondValue);
         } catch (QuantityException e) {
         }
-        // entityManager.flush();
 
         stockValue = stockyRepository.findAll();
         assertNotNull(stockValue);
@@ -233,12 +241,11 @@ public class QuantityServiceIT {
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
-        // !!! should roll-back
         try {
             quantityService.addQuantityWithException(negativeValue);
         } catch (QuantityException e) {
+            // do nothing
         }
-        // entityManager.flush();
 
         stockValue = stockyRepository.findAll();
         assertNotNull(stockValue);
@@ -247,6 +254,9 @@ public class QuantityServiceIT {
         quantities = quantityRepository.findAll();
         assertNotNull(quantities);
         assertThat(quantities, hasSize(2));
+        Assertions.assertThat(quantities).hasSize(2);
+        Optional<Quantity> negativeQuantity = quantities.stream().filter(q -> q.getQuantityValue() < 0).findFirst();
+        Assertions.assertThat(negativeQuantity.isPresent()).isFalse();
 
         currentStockValue = stockValue.get(0).getStockValue();
         assertThat(currentStockValue, is(firstValue + secondValue));

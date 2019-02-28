@@ -27,33 +27,35 @@ public class QuantityService {
     }
 
     @Transactional(rollbackOn = QuantityException.class)
-    public void addQuantityWithException(Long quantity) throws QuantityException {
+    public void addQuantityWithException(Long value) throws QuantityException {
+        Quantity quantity = new Quantity();
+        quantity.setQuantityValue(value);
+
         addQuantity(quantity);
 
-        // throw exception
-        // both saves should roll-back
-        Preconditions.getInstance().checkValidQuantityThrowException(quantity);
+        // intentionally placed after save
+        Preconditions.getInstance().checkValidQuantityThrowException(quantity.getQuantityValue());
     }
 
     @Transactional
-    public void addQuantityWithRuntimeException(Long quantity) {
+    public void addQuantityWithRuntimeException(Long value) {
+        Quantity quantity = new Quantity();
+        quantity.setQuantityValue(value);
+
         addQuantity(quantity);
 
-        // throw exception
-        // both saves should roll-back
-        Preconditions.getInstance().checkValidQuantityThrowRuntimeException(quantity);
+        // intentionally placed after save
+        Preconditions.getInstance().checkValidQuantityThrowRuntimeException(quantity.getQuantityValue());
     }
 
-    private void addQuantity(Long quantity) {
+    private void addQuantity(Quantity quantity) {
         List<Stock> stock = stockyRepository.findAll();
         if (CollectionUtils.isEmpty(stock)) {
-            stockyRepository.saveAndFlush(new Stock().setStockValue(quantity));
+            stockyRepository.saveAndFlush(new Stock().setStockValue(quantity.getQuantityValue()));
         } else {
             Stock stockValue = stock.get(0);
-            stockyRepository.saveAndFlush(stockValue.setStockValue(stockValue.getStockValue() + quantity));
+            stockyRepository.saveAndFlush(stockValue.setStockValue(stockValue.getStockValue() + quantity.getQuantityValue()));
         }
-
-        // add new record for quantity
-        quantityRepository.saveAndFlush(new Quantity().setQuantityValue(quantity));
+        quantityRepository.saveAndFlush(quantity);
     }
 }
