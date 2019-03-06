@@ -15,6 +15,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -29,6 +31,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@AutoConfigureTestEntityManager
 public class QuantityServiceIT {
 
     @Autowired
@@ -40,8 +43,8 @@ public class QuantityServiceIT {
     @Autowired
     private StockyRepository stockyRepository;
 
-//    @PersistenceContext
-//    private EntityManager entityManager;
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -263,5 +266,12 @@ public class QuantityServiceIT {
 
         sumOfQuantities = quantities.stream().mapToLong(Quantity::getQuantityValue).sum();
         assertThat(sumOfQuantities, is(firstValue + secondValue));
+    }
+
+    @Test
+    @Transactional
+    public void withTestEntityManager() {
+        Quantity savedQuantity = testEntityManager.persistFlushFind(new Quantity().setQuantityValue(100L));
+        Assertions.assertThat(savedQuantity.getQuantityValue()).isEqualTo(100);
     }
 }
